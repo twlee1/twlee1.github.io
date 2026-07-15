@@ -1,0 +1,20 @@
+[배포 설정]
+- GitHub Pages 주소: https://[username].github.io
+- GitHub 저장소: https://github.com/[username]/[username].github.io.git
+- GitHub 토큰 파일: github_token.txt
+- 배포 브랜치: main
+
+[배포 포함 파일]
+- index.html
+- styles.css
+- script.js
+- game.js (있는 경우)
+- assets/ (있는 경우)
+- 기타 웹사이트 실행에 필요한 HTML, CSS, JavaScript 정적 파일
+
+위 파일을 GitHub 저장소의 main 브랜치에 commit하고 push해서 GitHub Pages에 배포해줘.
+
+github_token.txt의 token="" 값은 인증에만 사용하고 출력하거나 commit하지 마.
+AORR.md, MEMORY.md, AORR_LOG.md, github_token.txt, env_settings.txt는 배포에서 제외해.
+
+완료 후 commit hash와 배포 URL만 알려줘.
