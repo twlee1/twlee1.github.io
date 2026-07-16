@@ -267,33 +267,97 @@ function resizeCanvas() {
   render();
 }
 
-function drawCell(x, y, color, radius = 8) {
+function roundedRectPath(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.roundRect(x, y, width, height, radius);
+}
+
+function drawBlock(x, y, palette, radius = 8) {
   const ctx = canvasState.ctx;
   if (!ctx) {
     return;
   }
   const cell = canvasState.cell;
-  const padding = Math.max(2, cell * 0.12);
+  const padding = Math.max(2, cell * 0.1);
   const size = cell - padding * 2;
   const px = x * cell + padding;
   const py = y * cell + padding;
+  const inset = Math.max(2, cell * 0.14);
+  const innerSize = Math.max(4, size - inset * 0.75);
 
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.roundRect(px, py, size, size, radius);
+  const shadow = ctx.createRadialGradient(
+    px + size * 0.5,
+    py + size * 0.5,
+    size * 0.12,
+    px + size * 0.5,
+    py + size * 0.5,
+    size
+  );
+  shadow.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+  shadow.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+  ctx.fillStyle = shadow;
+  roundedRectPath(ctx, px - 1, py - 1, size + 2, size + 2, radius + 1);
+  ctx.fill();
+
+  const body = ctx.createLinearGradient(px, py, px, py + size);
+  body.addColorStop(0, palette.top);
+  body.addColorStop(0.52, palette.mid);
+  body.addColorStop(1, palette.base);
+  ctx.fillStyle = body;
+  roundedRectPath(ctx, px, py, size, size, radius);
+  ctx.fill();
+
+  ctx.fillStyle = palette.side;
+  roundedRectPath(ctx, px + inset * 0.4, py + inset * 0.62, innerSize, innerSize, Math.max(4, radius - 2));
+  ctx.fill();
+
+  ctx.strokeStyle = palette.edge;
+  ctx.lineWidth = Math.max(1, cell * 0.04);
+  roundedRectPath(ctx, px, py, size, size, radius);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
+  roundedRectPath(ctx, px + inset * 0.42, py + inset * 0.35, size * 0.46, size * 0.16, 999);
   ctx.fill();
 }
 
-function drawCircle(x, y, color) {
+function drawOrb(x, y) {
   const ctx = canvasState.ctx;
   if (!ctx) {
     return;
   }
   const cell = canvasState.cell;
-  const radius = cell * 0.3;
-  ctx.fillStyle = color;
+  const cx = (x + 0.5) * cell;
+  const cy = (y + 0.5) * cell;
+  const radius = cell * 0.31;
+  const glow = ctx.createRadialGradient(cx, cy, radius * 0.15, cx, cy, radius * 2.2);
+  glow.addColorStop(0, 'rgba(112, 193, 255, 0.95)');
+  glow.addColorStop(0.45, 'rgba(24, 104, 219, 0.5)');
+  glow.addColorStop(1, 'rgba(24, 104, 219, 0)');
+  ctx.fillStyle = glow;
   ctx.beginPath();
-  ctx.arc((x + 0.5) * cell, (y + 0.5) * cell, radius, 0, Math.PI * 2);
+  ctx.arc(cx, cy, radius * 2.15, 0, Math.PI * 2);
+  ctx.fill();
+
+  const orb = ctx.createRadialGradient(
+    cx - radius * 0.4,
+    cy - radius * 0.4,
+    radius * 0.1,
+    cx,
+    cy,
+    radius
+  );
+  orb.addColorStop(0, '#eef8ff');
+  orb.addColorStop(0.45, '#6eb6ff');
+  orb.addColorStop(1, '#1868db');
+  ctx.fillStyle = orb;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+  ctx.beginPath();
+  ctx.arc(cx - radius * 0.35, cy - radius * 0.35, radius * 0.28, 0, Math.PI * 2);
   ctx.fill();
 }
 
@@ -307,10 +371,20 @@ function renderGrid() {
 
   ctx.clearRect(0, 0, size, size);
 
-  ctx.fillStyle = '#f7fbff';
+  const boardGradient = ctx.createLinearGradient(0, 0, 0, size);
+  boardGradient.addColorStop(0, '#101c30');
+  boardGradient.addColorStop(1, '#162845');
+  ctx.fillStyle = boardGradient;
   ctx.fillRect(0, 0, size, size);
 
-  ctx.strokeStyle = 'rgba(24, 104, 219, 0.08)';
+  const edgeGlow = ctx.createLinearGradient(0, 0, size, size);
+  edgeGlow.addColorStop(0, 'rgba(118, 183, 255, 0.22)');
+  edgeGlow.addColorStop(1, 'rgba(118, 183, 255, 0)');
+  ctx.strokeStyle = edgeGlow;
+  ctx.lineWidth = Math.max(1.5, cell * 0.08);
+  ctx.strokeRect(cell * 0.12, cell * 0.12, size - cell * 0.24, size - cell * 0.24);
+
+  ctx.strokeStyle = 'rgba(111, 170, 255, 0.1)';
   ctx.lineWidth = 1;
 
   for (let index = 0; index <= BOARD_SIZE; index += 1) {
@@ -325,6 +399,24 @@ function renderGrid() {
     ctx.lineTo(size, pos);
     ctx.stroke();
   }
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+  for (let row = 0; row < BOARD_SIZE; row += 2) {
+    ctx.fillRect(0, row * cell, size, cell);
+  }
+
+  const vignette = ctx.createRadialGradient(
+    size * 0.5,
+    size * 0.45,
+    size * 0.1,
+    size * 0.5,
+    size * 0.5,
+    size * 0.75
+  );
+  vignette.addColorStop(0, 'rgba(255, 255, 255, 0.02)');
+  vignette.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, size, size);
 }
 
 function render() {
@@ -335,17 +427,39 @@ function render() {
 
   renderGrid();
 
-  // Food
-  drawCircle(game.food.x, game.food.y, '#1868db');
+  drawOrb(game.food.x, game.food.y);
 
-  // Enemy
-  drawCell(game.enemy.x, game.enemy.y, '#ae2e24', 6);
-  drawCell(game.enemy.x + 0.12, game.enemy.y + 0.12, 'rgba(255, 255, 255, 0.92)', 4);
+  drawBlock(
+    game.enemy.x,
+    game.enemy.y,
+    {
+      top: '#ff9f8d',
+      mid: '#dd5547',
+      base: '#8f1f19',
+      side: 'rgba(255, 196, 182, 0.24)',
+      edge: 'rgba(255, 210, 204, 0.32)',
+    },
+    6
+  );
 
-  // Snake
   game.snake.forEach((segment, index) => {
-    const color = index === 0 ? '#123263' : '#4c6b1f';
-    drawCell(segment.x, segment.y, color, 7);
+    const palette =
+      index === 0
+        ? {
+            top: '#8fd1ff',
+            mid: '#2e7ee8',
+            base: '#123263',
+            side: 'rgba(186, 227, 255, 0.26)',
+            edge: 'rgba(213, 238, 255, 0.34)',
+          }
+        : {
+            top: '#b8ea6e',
+            mid: '#74a82b',
+            base: '#35540f',
+            side: 'rgba(220, 255, 172, 0.2)',
+            edge: 'rgba(220, 255, 172, 0.24)',
+          };
+    drawBlock(segment.x, segment.y, palette, 7);
   });
 }
 
