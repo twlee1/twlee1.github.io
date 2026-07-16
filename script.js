@@ -19,10 +19,17 @@ const soundToggle = document.querySelector('#sound-toggle');
 const difficultyButtons = document.querySelectorAll('.difficulty-btn');
 const dirButtons = document.querySelectorAll('.dir-btn');
 const actionButtons = document.querySelectorAll('.action-btn');
+const mini2048BoardNode = document.querySelector('#mini-2048-board');
+const mini2048ScoreNode = document.querySelector('#mini-2048-score');
+const mini2048BestNode = document.querySelector('#mini-2048-best');
+const mini2048StatusNode = document.querySelector('#mini-2048-status');
+const mini2048Buttons = document.querySelectorAll('[data-mini-2048]');
+const mini2048Restart = document.querySelector('#mini-2048-restart');
 
 const BOARD_SIZE = 20;
 const STORAGE_KEY = 'twlee1-snake-best-score';
 const RANKING_STORAGE_KEY = 'twlee1-snake-rankings';
+const MINI_2048_STORAGE_KEY = 'twlee1-mini-2048-best';
 const POWERUP_INTERVAL = 4;
 const POWERUP_DURATION_MS = 6000;
 const COMBO_WINDOW_MS = 2800;
@@ -74,6 +81,7 @@ let lastTime = 0;
 let accumulator = 0;
 let enemyAccumulator = 0;
 let effectAccumulator = 0;
+let mini2048 = createMini2048State();
 
 function createGameState() {
   return {
@@ -101,6 +109,15 @@ function createGameState() {
     powerUp: null,
     powerTimer: 0,
     nextFoodCount: 0,
+  };
+}
+
+function createMini2048State() {
+  return {
+    board: Array.from({ length: 4 }, () => Array(4).fill(0)),
+    score: 0,
+    best: readMini2048Best(),
+    status: 'Ready',
   };
 }
 
@@ -137,6 +154,23 @@ function readRankings() {
 function writeRankings(rankings) {
   try {
     window.localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(rankings));
+  } catch {
+    // Ignore storage failures.
+  }
+}
+
+function readMini2048Best() {
+  try {
+    const value = window.localStorage.getItem(MINI_2048_STORAGE_KEY);
+    return Number.parseInt(value || '0', 10) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function writeMini2048Best(value) {
+  try {
+    window.localStorage.setItem(MINI_2048_STORAGE_KEY, String(value));
   } catch {
     // Ignore storage failures.
   }
@@ -359,6 +393,158 @@ function setNavOpen(open) {
   }
   siteHeader.dataset.navOpen = String(open);
   navToggle.setAttribute('aria-expanded', String(open));
+}
+
+function renderMini2048() {
+  if (!mini2048BoardNode) {
+    return;
+  }
+
+  mini2048BoardNode.innerHTML = '';
+  mini2048.board.flat().forEach((value) => {
+    const tile = document.createElement('div');
+    tile.className = 'mini-2048-tile';
+    tile.dataset.value = String(value);
+    tile.textContent = value === 0 ? '' : String(value);
+    mini2048BoardNode.append(tile);
+  });
+
+  if (mini2048ScoreNode) {
+    mini2048ScoreNode.textContent = String(mini2048.score);
+  }
+  if (mini2048BestNode) {
+    mini2048BestNode.textContent = String(mini2048.best);
+  }
+  if (mini2048StatusNode) {
+    mini2048StatusNode.textContent = mini2048.status;
+  }
+}
+
+function addMini2048RandomTile() {
+  const empty = [];
+  for (let row = 0; row < 4; row += 1) {
+    for (let col = 0; col < 4; col += 1) {
+      if (mini2048.board[row][col] === 0) {
+        empty.push({ row, col });
+      }
+    }
+  }
+  if (empty.length === 0) {
+    return;
+  }
+  const slot = empty[Math.floor(Math.random() * empty.length)];
+  mini2048.board[slot.row][slot.col] = Math.random() < 0.9 ? 2 : 4;
+}
+
+function resetMini2048() {
+  const best = mini2048.best;
+  mini2048 = createMini2048State();
+  mini2048.best = best;
+  addMini2048RandomTile();
+  addMini2048RandomTile();
+  mini2048.status = 'Running';
+  renderMini2048();
+}
+
+function compressMini2048Line(line) {
+  const filtered = line.filter((value) => value !== 0);
+  const merged = [];
+  let scoreGain = 0;
+
+  for (let index = 0; index < filtered.length; index += 1) {
+    if (filtered[index] === filtered[index + 1]) {
+      const value = filtered[index] * 2;
+      merged.push(value);
+      scoreGain += value;
+      index += 1;
+    } else {
+      merged.push(filtered[index]);
+    }
+  }
+
+  while (merged.length < 4) {
+    merged.push(0);
+  }
+
+  return { line: merged, scoreGain };
+}
+
+function rotateMini2048BoardRight(board) {
+  return board[0].map((_, columnIndex) => board.map((row) => row[columnIndex]).reverse());
+}
+
+function moveMini2048(direction) {
+  if (!mini2048BoardNode) {
+    return;
+  }
+
+  let rotations = 0;
+  if (direction === 'up') {
+    rotations = 3;
+  } else if (direction === 'right') {
+    rotations = 2;
+  } else if (direction === 'down') {
+    rotations = 1;
+  }
+
+  let board = mini2048.board.map((row) => [...row]);
+  for (let count = 0; count < rotations; count += 1) {
+    board = rotateMini2048BoardRight(board);
+  }
+
+  let changed = false;
+  let gained = 0;
+  board = board.map((row) => {
+    const result = compressMini2048Line(row);
+    if (result.line.some((value, index) => value !== row[index])) {
+      changed = true;
+    }
+    gained += result.scoreGain;
+    return result.line;
+  });
+
+  for (let count = 0; count < (4 - rotations) % 4; count += 1) {
+    board = rotateMini2048BoardRight(board);
+  }
+
+  if (!changed) {
+    mini2048.status = 'Blocked';
+    renderMini2048();
+    return;
+  }
+
+  mini2048.board = board;
+  mini2048.score += gained;
+  if (mini2048.score > mini2048.best) {
+    mini2048.best = mini2048.score;
+    writeMini2048Best(mini2048.best);
+  }
+  addMini2048RandomTile();
+  mini2048.status = mini2048.board.flat().includes(2048) ? '2048!' : 'Running';
+
+  if (!canMini2048Move()) {
+    mini2048.status = 'Game over';
+  }
+
+  renderMini2048();
+}
+
+function canMini2048Move() {
+  for (let row = 0; row < 4; row += 1) {
+    for (let col = 0; col < 4; col += 1) {
+      const current = mini2048.board[row][col];
+      if (current === 0) {
+        return true;
+      }
+      if (col < 3 && current === mini2048.board[row][col + 1]) {
+        return true;
+      }
+      if (row < 3 && current === mini2048.board[row + 1][col]) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 function toggleNav() {
@@ -1056,6 +1242,18 @@ actionButtons.forEach((button) => {
   });
 });
 
+mini2048Buttons.forEach((button) => {
+  button.addEventListener('click', () => {
+    moveMini2048(button.dataset.mini2048 || 'left');
+  });
+});
+
+if (mini2048Restart) {
+  mini2048Restart.addEventListener('click', () => {
+    resetMini2048();
+  });
+}
+
 difficultyButtons.forEach((button) => {
   button.addEventListener('click', () => {
     setDifficulty(button.dataset.difficulty || 'normal');
@@ -1089,3 +1287,4 @@ resetGameState();
 resizeCanvas();
 syncHud();
 render();
+resetMini2048();

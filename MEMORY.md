@@ -14,13 +14,13 @@
 
 ## Current State
 - State: DEPLOY_APPROVAL_REQUIRED
-- Completed loop: Step 9 change-request loop 4
-- Next loop: commit, push, redeploy after explicit user deployment request
+- Completed loop: Step 9 change-request loop 5
+- Next loop: commit, push, redeploy for the 2048 mini-game addition
 - Retry: 0
 - Fingerprint: none
 - Blocker: none
-- Current commit: `2921755` + uncommitted Step 9 loop 4 changes
-- Git status: dirty workspace with user exercise files, local docs, updated `CHANGE_REQUEST.json`, and new reference-section content
+- Current commit: `f383f29` + uncommitted Step 9 loop 5 changes
+- Git status: local workspace includes the new 2048 mini-game changes plus unrelated user exercise changes and local docs
 - Rollback: return site files to deployed commit `1386f03` if approval is withdrawn
 - Last good commit / URL: `1386f03` / `https://twlee1.github.io/`
 
@@ -46,6 +46,6 @@
 ## Recent Loops
 | Loop | State | Mode / Model | Changed Files | Test Result | Retry | Next Action |
 |---|---|---|---|---|---:|---|
-| 9-4 | DEPLOY_APPROVAL_REQUIRED | CODEX_FALLBACK / unavailable | `CHANGE_REQUEST.json`, `CHANGE_REQUEST.md`, `index.html`, `styles.css`, `MEMORY.md`, `AORR_LOG.md` | PASS | 0 | Commit, push, redeploy |
+| 9-5 | DEPLOY_APPROVAL_REQUIRED | CODEX_FALLBACK / unavailable | `index.html`, `styles.css`, `script.js`, `MEMORY.md`, `AORR_LOG.md` | PASS | 0 | Commit, push, redeploy |
+| 9-4 | DEPLOYED | CODEX_FALLBACK / unavailable | `CHANGE_REQUEST.json`, `CHANGE_REQUEST.md`, `index.html`, `styles.css`, `MEMORY.md`, `AORR_LOG.md` | PASS | 0 | Completed |
 | 9-3 | DEPLOY_APPROVAL_REQUIRED | CODEX_FALLBACK / unavailable | `script.js`, `MEMORY.md`, `AORR_LOG.md` | PASS | 0 | Wait for redeploy approval |
-| 9-2 | DEPLOY_APPROVAL_REQUIRED | CODEX_FALLBACK / unavailable | `index.html`, `styles.css`, `script.js`, `MEMORY.md`, `AORR_LOG.md` | PASS | 0 | Extend audio scope |

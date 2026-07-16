@@ -267,6 +267,51 @@
               </article>
             </div>
           </div>
+
+          <div class="bonus-game-block" aria-labelledby="bonus-game-heading">
+            <div class="section-heading reference-heading">
+              <p class="eyebrow">Bonus Game</p>
+              <h3 id="bonus-game-heading">Playable 2048 mini-game, added directly into this page.</h3>
+              <p class="reference-intro">
+                This one is included as an actual playable example instead of a reference card. It stays inside the same static HTML, CSS, and JavaScript scope.
+              </p>
+            </div>
+
+            <div class="bonus-game-shell">
+              <div class="bonus-game-board-wrap">
+                <div class="bonus-game-topbar">
+                  <div class="bonus-stat"><span>Score</span><strong id="mini-2048-score">0</strong></div>
+                  <div class="bonus-stat"><span>Best</span><strong id="mini-2048-best">0</strong></div>
+                  <div class="bonus-stat"><span>Status</span><strong id="mini-2048-status">Ready</strong></div>
+                </div>
+
+                <div class="mini-2048-board" id="mini-2048-board" aria-label="2048 board"></div>
+              </div>
+
+              <div class="bonus-game-panel">
+                <div class="control-help compact-panel">
+                  <h3>How to play</h3>
+                  <ul>
+                    <li>Use the arrow buttons to slide all tiles in one direction.</li>
+                    <li>Matching numbers merge into a larger number and increase your score.</li>
+                    <li>Reach 2048 or keep going for a higher best score.</li>
+                    <li>If the board fills and no merge remains, the run ends.</li>
+                  </ul>
+                </div>
+
+                <div class="mini-2048-controls" aria-label="2048 controls">
+                  <button type="button" class="mini-2048-btn up" data-mini-2048="up">Up</button>
+                  <button type="button" class="mini-2048-btn left" data-mini-2048="left">Left</button>
+                  <button type="button" class="mini-2048-btn down" data-mini-2048="down">Down</button>
+                  <button type="button" class="mini-2048-btn right" data-mini-2048="right">Right</button>
+                </div>
+
+                <div class="action-row">
+                  <button type="button" class="action-btn" id="mini-2048-restart">Restart 2048</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

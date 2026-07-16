@@ -56,3 +56,23 @@
 - Act: updated `CHANGE_REQUEST.json`, added `CHANGE_REQUEST.md`, and updated `index.html` plus `styles.css` with a five-card reference section ordered as `2048`, `Emoji Minesweeper`, `A Dark Room`, `Sleeping Beauty`, and `Hextris`.
 - Verification: `CHANGE_REQUEST.json` parse check, `node --check script.js`, explicit HTML string checks for the new reference section and five titles, and local `HTTP 200` from a temporary static server.
 - Result: PASS. Local site is ready for commit, push, and redeploy.
+
+## 2026-07-16 - Deployment After Step 9 Loop 4
+- Mode: CODEX_FALLBACK
+- Deployment target: `https://github.com/twlee1/twlee1.github.io.git` on branch `main`
+- Commit pushed: `f383f29`
+- Result: PASS
+- Live URL: `https://twlee1.github.io/`
+- Live checks:
+  - `HTTP 200 OK` confirmed from the deployed URL
+  - `Reference Picks`, `Emoji Minesweeper`, and `Hextris` strings confirmed in live HTML
+- Final state: `DEPLOYED`
+
+## 2026-07-16 - Step 9 Loop 5
+- Mode: CODEX_FALLBACK
+- Claude model: unavailable in this environment
+- Pre-check: `claude --print` remained unavailable, so fallback verification was used.
+- Scope: replace the earlier reference-only interpretation with an actual additional playable game embedded in the page.
+- Act: updated `index.html`, `styles.css`, and `script.js` to add a playable 2048 mini-game below the existing snake game, including score, best score, status, directional controls, restart, local persistence, and isolated rendering/state logic.
+- Verification: `node --check script.js`, explicit HTML presence checks for the 2048 block, and local `HTTP 200` from a temporary static server.
+- Result: PASS. Local site is ready for commit, push, and redeploy.
