@@ -62,8 +62,10 @@ let canvasState = {
 };
 
 let audioState = {
-  enabled: false,
+  enabled: true,
   ctx: null,
+  musicTimerId: null,
+  musicStartTime: 0,
 };
 
 let game = createGameState();
@@ -154,11 +156,7 @@ function ensureAudioContext() {
   return audioState.ctx;
 }
 
-function playTone(frequency, duration, type = 'sine', gainValue = 0.028) {
-  const ctx = ensureAudioContext();
-  if (!ctx) {
-    return;
-  }
+function playToneAt(ctx, frequency, duration, startTime, type = 'sine', gainValue = 0.028) {
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
   oscillator.type = type;
@@ -166,11 +164,72 @@ function playTone(frequency, duration, type = 'sine', gainValue = 0.028) {
   gainNode.gain.value = gainValue;
   oscillator.connect(gainNode);
   gainNode.connect(ctx.destination);
+  gainNode.gain.setValueAtTime(gainValue, startTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+  oscillator.start(startTime);
+  oscillator.stop(startTime + duration);
+}
+
+function playTone(frequency, duration, type = 'sine', gainValue = 0.028) {
+  const ctx = ensureAudioContext();
+  if (!ctx) {
+    return;
+  }
   const now = ctx.currentTime;
-  gainNode.gain.setValueAtTime(gainValue, now);
-  gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-  oscillator.start(now);
-  oscillator.stop(now + duration);
+  playToneAt(ctx, frequency, duration, now, type, gainValue);
+}
+
+function queueMusicPattern(startTime) {
+  const ctx = ensureAudioContext();
+  if (!ctx || !audioState.enabled) {
+    return;
+  }
+  const beat = 0.2;
+  const melody = [
+    { note: 392, offset: 0.0, length: 0.16 },
+    { note: 494, offset: 0.2, length: 0.16 },
+    { note: 587, offset: 0.4, length: 0.16 },
+    { note: 659, offset: 0.6, length: 0.16 },
+    { note: 587, offset: 0.8, length: 0.16 },
+    { note: 494, offset: 1.0, length: 0.16 },
+    { note: 523, offset: 1.2, length: 0.16 },
+    { note: 659, offset: 1.4, length: 0.22 },
+  ];
+  melody.forEach((item, index) => {
+    playToneAt(ctx, item.note, item.length, startTime + item.offset, 'triangle', 0.012);
+    if (index % 2 === 0) {
+      playToneAt(ctx, item.note / 2, item.length * 0.9, startTime + item.offset, 'sine', 0.007);
+    }
+  });
+  const bass = [196, 220, 247, 220];
+  bass.forEach((note, index) => {
+    playToneAt(ctx, note, beat * 1.7, startTime + index * beat * 2, 'square', 0.0065);
+  });
+}
+
+function stopBackgroundMusic() {
+  if (audioState.musicTimerId) {
+    window.clearInterval(audioState.musicTimerId);
+    audioState.musicTimerId = null;
+  }
+}
+
+function startBackgroundMusic() {
+  const ctx = ensureAudioContext();
+  if (!ctx || !audioState.enabled || audioState.musicTimerId || !game.running || game.paused || game.gameOver) {
+    return;
+  }
+  const loopDuration = 1.6;
+  const startTime = ctx.currentTime + 0.04;
+  audioState.musicStartTime = startTime;
+  queueMusicPattern(startTime);
+  audioState.musicTimerId = window.setInterval(() => {
+    if (!audioState.enabled || !game.running || game.paused || game.gameOver) {
+      stopBackgroundMusic();
+      return;
+    }
+    queueMusicPattern(ctx.currentTime + 0.04);
+  }, loopDuration * 1000);
 }
 
 function addParticles(x, y, color, count = 12) {
@@ -390,6 +449,7 @@ function startGame() {
   game.running = true;
   game.paused = false;
   setMessage('Running');
+  startBackgroundMusic();
   if (!rafId) {
     lastTime = performance.now();
     rafId = requestAnimationFrame(loop);
@@ -405,6 +465,11 @@ function togglePause() {
     return;
   }
   game.paused = !game.paused;
+  if (game.paused) {
+    stopBackgroundMusic();
+  } else {
+    startBackgroundMusic();
+  }
   setMessage(game.paused ? 'Paused' : 'Running');
 }
 
@@ -417,6 +482,7 @@ function endGame(reason) {
   game.running = false;
   game.paused = false;
   game.gameOver = true;
+  stopBackgroundMusic();
   updateRankings(game.score);
   game.message = reason;
   addParticles(game.snake[0].x, game.snake[0].y, 'rgba(255, 110, 110, 0.85)', 16);
@@ -1003,6 +1069,11 @@ if (soundToggle) {
     const ctx = ensureAudioContext();
     if (ctx && ctx.state === 'suspended') {
       await ctx.resume();
+    }
+    if (audioState.enabled) {
+      startBackgroundMusic();
+    } else {
+      stopBackgroundMusic();
     }
     syncHud();
     if (audioState.enabled) {
