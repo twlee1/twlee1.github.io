@@ -27,12 +27,12 @@
 
         <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
           <a href="#home">Home</a>
+          <a href="#games">Games</a>
           <a href="#about">About</a>
           <a href="#projects">Projects</a>
           <a href="#experience">Experience</a>
           <a href="#research">Research</a>
           <a href="#resources">Resources</a>
-          <a href="#games">Games</a>
           <a href="#contact">Contact</a>
         </nav>
       </div>
@@ -50,8 +50,8 @@
               profile brief is confirmed.
             </p>
             <div class="hero-actions">
-              <a class="button button-primary" href="#projects">View projects</a>
-              <a class="button button-secondary" href="#games">Open games</a>
+              <a class="button button-primary" href="#games">Open games first</a>
+              <a class="button button-secondary" href="#projects">View projects</a>
             </div>
           </div>
 
@@ -78,6 +78,133 @@
               <li><span>Next</span><strong>Responsive content depth and game polish</strong></li>
             </ul>
           </aside>
+        </div>
+      </section>
+
+      <section class="section section-games" id="games">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Games</p>
+            <h2>Playable arcade zone, now placed right after Home.</h2>
+          </div>
+
+          <div class="game-shell">
+            <div class="game-topbar">
+              <div class="game-stat"><span>Score</span><strong id="score">0</strong></div>
+              <div class="game-stat"><span>Best</span><strong id="best-score">0</strong></div>
+              <div class="game-stat"><span>Status</span><strong id="game-status">Ready</strong></div>
+              <div class="game-stat"><span>Combo</span><strong id="combo-count">x1</strong></div>
+              <div class="game-stat"><span>Level</span><strong id="level-display">Lv.1</strong></div>
+              <div class="game-stat"><span>Power</span><strong id="power-display">None</strong></div>
+            </div>
+
+            <div class="game-layout">
+              <div class="game-board-wrap">
+                <div class="hud-ribbon">
+                  <div class="meter-card">
+                    <div class="meter-copy">
+                      <span>Score progress</span>
+                      <strong id="score-progress-label">0 / 5</strong>
+                    </div>
+                    <div class="meter-track" aria-hidden="true">
+                      <span class="meter-fill" id="score-progress-fill"></span>
+                    </div>
+                  </div>
+                  <div class="meter-card">
+                    <div class="meter-copy">
+                      <span>Difficulty</span>
+                      <strong id="difficulty-label">Normal</strong>
+                    </div>
+                    <div class="meter-track danger" aria-hidden="true">
+                      <span class="meter-fill danger" id="difficulty-fill"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="game-stage">
+                  <span class="game-glow glow-a" aria-hidden="true"></span>
+                  <span class="game-glow glow-b" aria-hidden="true"></span>
+                  <canvas
+                    id="game-canvas"
+                    class="game-canvas"
+                    width="480"
+                    height="480"
+                    aria-label="Snake game board"
+                    role="img"
+                  ></canvas>
+                </div>
+
+                <p class="game-note">
+                  Keyboard: Arrow keys or WASD. Utility keys: Space to pause, R to restart. Mobile:
+                  tap the direction buttons below the board.
+                </p>
+              </div>
+
+              <div class="game-panel">
+                <div class="control-help control-help-steps">
+                  <h3>How to play</h3>
+                  <ol class="guide-list">
+                    <li>Press Start or any direction key to begin.</li>
+                    <li>Eat apples quickly to build combo and level up your cute worm.</li>
+                    <li>Avoid walls, your own body, and the villain enemies moving around the board.</li>
+                    <li>Grab the star power-up for a short safety boost when it appears.</li>
+                    <li>Use Pause when the board gets crowded, then Restart to reset instantly.</li>
+                  </ol>
+                </div>
+
+                <div class="control-help compact-panel">
+                  <h3>Game setup</h3>
+                  <div class="difficulty-row" aria-label="Difficulty">
+                    <button type="button" class="difficulty-btn" data-difficulty="easy">Easy</button>
+                    <button type="button" class="difficulty-btn is-active" data-difficulty="normal">Normal</button>
+                    <button type="button" class="difficulty-btn" data-difficulty="hard">Hard</button>
+                  </div>
+                  <div class="toggle-row">
+                    <button type="button" class="sound-btn" id="sound-toggle" aria-pressed="false">Sound Off</button>
+                  </div>
+                </div>
+
+                <div class="control-pad" aria-label="Game controls">
+                  <button type="button" class="dir-btn up" data-direction="up">Up</button>
+                  <button type="button" class="dir-btn left" data-direction="left">Left</button>
+                  <button type="button" class="dir-btn down" data-direction="down">Down</button>
+                  <button type="button" class="dir-btn right" data-direction="right">Right</button>
+                </div>
+
+                <div class="action-row">
+                  <button type="button" class="action-btn" data-action="start">Start</button>
+                  <button type="button" class="action-btn" data-action="pause">Pause</button>
+                  <button type="button" class="action-btn" data-action="restart">Restart</button>
+                </div>
+
+                <div class="control-help">
+                  <h3>Rules</h3>
+                  <ul>
+                    <li>Eat food to grow, score, and build a faster combo streak.</li>
+                    <li>Higher score raises level, speed, and enemy count automatically.</li>
+                    <li>Villain enemies and hazards reset your run on contact.</li>
+                    <li>Reverse direction is blocked to keep input safe.</li>
+                  </ul>
+                </div>
+
+                <div class="control-help compact-panel">
+                  <h3>Ranking board</h3>
+                  <ol class="ranking-list" id="ranking-list">
+                    <li>No runs yet.</li>
+                  </ol>
+                </div>
+
+                <div class="control-help compact-panel">
+                  <h3>Extra ideas now included</h3>
+                  <ul>
+                    <li>Combo streak scoring for fast food chains.</li>
+                    <li>Power-up star for short burst advantage.</li>
+                    <li>Adaptive difficulty with more enemies over time.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -236,78 +363,6 @@
               <h3>OpenAI Docs</h3>
               <p>Official product documentation for API concepts, models, and implementation patterns.</p>
             </a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section-games" id="games">
-        <div class="container">
-          <div class="section-heading">
-            <p class="eyebrow">Games</p>
-            <h2>Snake game with clearer guidance and a heavier visual stage.</h2>
-          </div>
-
-          <div class="game-shell">
-            <div class="game-topbar">
-              <div class="game-stat"><span>Score</span><strong id="score">0</strong></div>
-              <div class="game-stat"><span>Best</span><strong id="best-score">0</strong></div>
-              <div class="game-stat"><span>Status</span><strong id="game-status">Ready</strong></div>
-            </div>
-
-            <div class="game-layout">
-              <div class="game-board-wrap">
-                <div class="game-stage">
-                  <span class="game-glow glow-a" aria-hidden="true"></span>
-                  <span class="game-glow glow-b" aria-hidden="true"></span>
-                  <canvas
-                    id="game-canvas"
-                    class="game-canvas"
-                    width="480"
-                    height="480"
-                    aria-label="Snake game board"
-                    role="img"
-                  ></canvas>
-                </div>
-                <p class="game-note">
-                  Keyboard: Arrow keys or WASD. Utility keys: Space to pause, R to restart. Mobile:
-                  tap the direction buttons below the board.
-                </p>
-              </div>
-
-              <div class="game-panel">
-                <div class="control-help control-help-steps">
-                  <h3>How to play</h3>
-                  <ol class="guide-list">
-                    <li>Press Start or any direction key to begin.</li>
-                    <li>Eat the blue energy orbs to grow and raise your score.</li>
-                    <li>Avoid walls, your own body, and the moving enemy cube.</li>
-                    <li>Use Pause when the board gets crowded, then Restart to reset instantly.</li>
-                  </ol>
-                </div>
-
-                <div class="control-pad" aria-label="Game controls">
-                  <button type="button" class="dir-btn up" data-direction="up">Up</button>
-                  <button type="button" class="dir-btn left" data-direction="left">Left</button>
-                  <button type="button" class="dir-btn down" data-direction="down">Down</button>
-                  <button type="button" class="dir-btn right" data-direction="right">Right</button>
-                </div>
-
-                <div class="action-row">
-                  <button type="button" class="action-btn" data-action="start">Start</button>
-                  <button type="button" class="action-btn" data-action="pause">Pause</button>
-                  <button type="button" class="action-btn" data-action="restart">Restart</button>
-                </div>
-
-                <div class="control-help">
-                  <h3>Rules</h3>
-                  <ul>
-                    <li>Eat food to grow and score.</li>
-                    <li>Avoid walls, yourself, and the moving enemy.</li>
-                    <li>Reverse direction is blocked to keep input safe.</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
