@@ -25,6 +25,17 @@ const mini2048BestNode = document.querySelector('#mini-2048-best');
 const mini2048StatusNode = document.querySelector('#mini-2048-status');
 const mini2048Buttons = document.querySelectorAll('[data-mini-2048]');
 const mini2048Restart = document.querySelector('#mini-2048-restart');
+const ticBoardNode = document.querySelector('#tic-board');
+const ticStatusNode = document.querySelector('#ttt-status');
+const ticRestartButton = document.querySelector('#ttt-restart');
+const memoryBoardNode = document.querySelector('#memory-board');
+const memoryMovesNode = document.querySelector('#memory-moves');
+const memoryStatusNode = document.querySelector('#memory-status');
+const memoryRestartButton = document.querySelector('#memory-restart');
+const reactionBestNode = document.querySelector('#reaction-best');
+const reactionStatusNode = document.querySelector('#reaction-status');
+const reactionPad = document.querySelector('#reaction-pad');
+const reactionRestartButton = document.querySelector('#reaction-restart');
 
 const BOARD_SIZE = 20;
 const STORAGE_KEY = 'twlee1-snake-best-score';
@@ -82,6 +93,9 @@ let accumulator = 0;
 let enemyAccumulator = 0;
 let effectAccumulator = 0;
 let mini2048 = createMini2048State();
+let ticTacToe = createTicTacToeState();
+let memoryGame = createMemoryGameState();
+let reactionGame = createReactionGameState();
 
 function createGameState() {
   return {
@@ -118,6 +132,36 @@ function createMini2048State() {
     score: 0,
     best: readMini2048Best(),
     status: 'Ready',
+  };
+}
+
+function createTicTacToeState() {
+  return {
+    board: Array(9).fill(''),
+    current: 'X',
+    status: 'X turn',
+    winner: null,
+  };
+}
+
+function createMemoryGameState() {
+  return {
+    cards: [],
+    flipped: [],
+    matched: 0,
+    moves: 0,
+    status: 'Ready',
+    locked: false,
+  };
+}
+
+function createReactionGameState() {
+  return {
+    best: readReactionBest(),
+    status: 'Idle',
+    phase: 'idle',
+    timerId: null,
+    startedAt: 0,
   };
 }
 
@@ -171,6 +215,23 @@ function readMini2048Best() {
 function writeMini2048Best(value) {
   try {
     window.localStorage.setItem(MINI_2048_STORAGE_KEY, String(value));
+  } catch {
+    // Ignore storage failures.
+  }
+}
+
+function readReactionBest() {
+  try {
+    const value = window.localStorage.getItem('twlee1-reaction-best');
+    return Number.parseInt(value || '0', 10) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function writeReactionBest(value) {
+  try {
+    window.localStorage.setItem('twlee1-reaction-best', String(value));
   } catch {
     // Ignore storage failures.
   }
@@ -545,6 +606,224 @@ function canMini2048Move() {
     }
   }
   return false;
+}
+
+function renderTicTacToe() {
+  if (!ticBoardNode) {
+    return;
+  }
+  ticBoardNode.innerHTML = '';
+  ticTacToe.board.forEach((value, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'tic-cell';
+    button.dataset.ticIndex = String(index);
+    button.textContent = value;
+    button.disabled = Boolean(value) || Boolean(ticTacToe.winner);
+    ticBoardNode.append(button);
+  });
+  if (ticStatusNode) {
+    ticStatusNode.textContent = ticTacToe.status;
+  }
+}
+
+function resetTicTacToe() {
+  ticTacToe = createTicTacToeState();
+  renderTicTacToe();
+}
+
+function getTicWinner(board) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  return lines.find(([a, b, c]) => board[a] && board[a] === board[b] && board[a] === board[c]);
+}
+
+function playTicTacToe(index) {
+  if (ticTacToe.board[index] || ticTacToe.winner) {
+    return;
+  }
+  ticTacToe.board[index] = ticTacToe.current;
+  const winLine = getTicWinner(ticTacToe.board);
+  if (winLine) {
+    ticTacToe.winner = ticTacToe.current;
+    ticTacToe.status = `${ticTacToe.current} wins`;
+  } else if (ticTacToe.board.every(Boolean)) {
+    ticTacToe.status = 'Draw';
+  } else {
+    ticTacToe.current = ticTacToe.current === 'X' ? 'O' : 'X';
+    ticTacToe.status = `${ticTacToe.current} turn`;
+  }
+  renderTicTacToe();
+}
+
+function shuffleMemoryCards() {
+  const symbols = ['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'];
+  for (let index = symbols.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [symbols[index], symbols[swapIndex]] = [symbols[swapIndex], symbols[index]];
+  }
+  return symbols.map((symbol, index) => ({
+    id: `${symbol}-${index}`,
+    symbol,
+    flipped: false,
+    matched: false,
+  }));
+}
+
+function renderMemoryGame() {
+  if (!memoryBoardNode) {
+    return;
+  }
+  memoryBoardNode.innerHTML = '';
+  memoryGame.cards.forEach((card, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'memory-card';
+    if (card.flipped) {
+      button.classList.add('is-flipped');
+    }
+    if (card.matched) {
+      button.classList.add('is-matched');
+    }
+    button.dataset.memoryIndex = String(index);
+    button.textContent = card.symbol;
+    button.disabled = card.flipped || card.matched || memoryGame.locked;
+    memoryBoardNode.append(button);
+  });
+  if (memoryMovesNode) {
+    memoryMovesNode.textContent = String(memoryGame.moves);
+  }
+  if (memoryStatusNode) {
+    memoryStatusNode.textContent = memoryGame.status;
+  }
+}
+
+function resetMemoryGame() {
+  memoryGame = createMemoryGameState();
+  memoryGame.cards = shuffleMemoryCards();
+  memoryGame.status = 'Find pairs';
+  renderMemoryGame();
+}
+
+function flipMemoryCard(index) {
+  const card = memoryGame.cards[index];
+  if (!card || card.flipped || card.matched || memoryGame.locked) {
+    return;
+  }
+  card.flipped = true;
+  memoryGame.flipped.push(index);
+  if (memoryGame.flipped.length === 2) {
+    memoryGame.moves += 1;
+    const [firstIndex, secondIndex] = memoryGame.flipped;
+    const first = memoryGame.cards[firstIndex];
+    const second = memoryGame.cards[secondIndex];
+    if (first.symbol === second.symbol) {
+      first.matched = true;
+      second.matched = true;
+      memoryGame.flipped = [];
+      memoryGame.matched += 1;
+      memoryGame.status = memoryGame.matched === 4 ? 'Cleared' : 'Match';
+    } else {
+      memoryGame.locked = true;
+      memoryGame.status = 'Miss';
+      window.setTimeout(() => {
+        first.flipped = false;
+        second.flipped = false;
+        memoryGame.flipped = [];
+        memoryGame.locked = false;
+        memoryGame.status = 'Find pairs';
+        renderMemoryGame();
+      }, 650);
+    }
+  }
+  renderMemoryGame();
+}
+
+function renderReactionGame() {
+  if (reactionBestNode) {
+    reactionBestNode.textContent = reactionGame.best ? `${reactionGame.best} ms` : '-';
+  }
+  if (reactionStatusNode) {
+    reactionStatusNode.textContent = reactionGame.status;
+  }
+  if (reactionPad) {
+    reactionPad.classList.remove('is-idle', 'is-waiting', 'is-ready', 'is-result');
+    reactionPad.classList.add(
+      reactionGame.phase === 'waiting'
+        ? 'is-waiting'
+        : reactionGame.phase === 'ready'
+          ? 'is-ready'
+          : reactionGame.phase === 'result'
+            ? 'is-result'
+            : 'is-idle'
+    );
+    reactionPad.textContent =
+      reactionGame.phase === 'waiting'
+        ? 'Wait for green'
+        : reactionGame.phase === 'ready'
+          ? 'Click now'
+          : reactionGame.phase === 'result'
+            ? reactionGame.status
+            : 'Tap to start';
+  }
+}
+
+function clearReactionTimer() {
+  if (reactionGame.timerId) {
+    window.clearTimeout(reactionGame.timerId);
+    reactionGame.timerId = null;
+  }
+}
+
+function resetReactionGame() {
+  clearReactionTimer();
+  reactionGame = createReactionGameState();
+  renderReactionGame();
+}
+
+function startReactionRound() {
+  clearReactionTimer();
+  reactionGame.phase = 'waiting';
+  reactionGame.status = 'Wait';
+  reactionGame.timerId = window.setTimeout(() => {
+    reactionGame.phase = 'ready';
+    reactionGame.status = 'Go';
+    reactionGame.startedAt = performance.now();
+    renderReactionGame();
+  }, 900 + Math.random() * 1600);
+  renderReactionGame();
+}
+
+function handleReactionPad() {
+  if (reactionGame.phase === 'idle' || reactionGame.phase === 'result') {
+    startReactionRound();
+    return;
+  }
+  if (reactionGame.phase === 'waiting') {
+    clearReactionTimer();
+    reactionGame.phase = 'result';
+    reactionGame.status = 'Too early';
+    renderReactionGame();
+    return;
+  }
+  if (reactionGame.phase === 'ready') {
+    const elapsed = Math.max(1, Math.round(performance.now() - reactionGame.startedAt));
+    reactionGame.phase = 'result';
+    reactionGame.status = `${elapsed} ms`;
+    if (!reactionGame.best || elapsed < reactionGame.best) {
+      reactionGame.best = elapsed;
+      writeReactionBest(elapsed);
+    }
+    renderReactionGame();
+  }
 }
 
 function toggleNav() {
@@ -1254,6 +1533,56 @@ if (mini2048Restart) {
   });
 }
 
+if (ticBoardNode) {
+  ticBoardNode.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const index = Number.parseInt(target.dataset.ticIndex || '', 10);
+    if (Number.isInteger(index)) {
+      playTicTacToe(index);
+    }
+  });
+}
+
+if (ticRestartButton) {
+  ticRestartButton.addEventListener('click', () => {
+    resetTicTacToe();
+  });
+}
+
+if (memoryBoardNode) {
+  memoryBoardNode.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const index = Number.parseInt(target.dataset.memoryIndex || '', 10);
+    if (Number.isInteger(index)) {
+      flipMemoryCard(index);
+    }
+  });
+}
+
+if (memoryRestartButton) {
+  memoryRestartButton.addEventListener('click', () => {
+    resetMemoryGame();
+  });
+}
+
+if (reactionPad) {
+  reactionPad.addEventListener('click', () => {
+    handleReactionPad();
+  });
+}
+
+if (reactionRestartButton) {
+  reactionRestartButton.addEventListener('click', () => {
+    resetReactionGame();
+  });
+}
+
 difficultyButtons.forEach((button) => {
   button.addEventListener('click', () => {
     setDifficulty(button.dataset.difficulty || 'normal');
@@ -1288,3 +1617,6 @@ resizeCanvas();
 syncHud();
 render();
 resetMini2048();
+resetTicTacToe();
+resetMemoryGame();
+resetReactionGame();

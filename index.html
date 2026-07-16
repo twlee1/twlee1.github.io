@@ -271,9 +271,9 @@
           <div class="bonus-game-block" aria-labelledby="bonus-game-heading">
             <div class="section-heading reference-heading">
               <p class="eyebrow">Bonus Game</p>
-              <h3 id="bonus-game-heading">Playable 2048 mini-game, added directly into this page.</h3>
+              <h3 id="bonus-game-heading">Playable mini-game lineup, now expanded to 5 total games on this page.</h3>
               <p class="reference-intro">
-                This one is included as an actual playable example instead of a reference card. It stays inside the same static HTML, CSS, and JavaScript scope.
+                The page now includes the original snake game plus four extra mini-games, all kept inside the same static HTML, CSS, and JavaScript scope.
               </p>
             </div>
 
@@ -310,6 +310,58 @@
                   <button type="button" class="action-btn" id="mini-2048-restart">Restart 2048</button>
                 </div>
               </div>
+            </div>
+
+            <div class="mini-game-grid" aria-label="Extra playable mini games">
+              <article class="mini-game-card">
+                <div class="mini-game-head">
+                  <p class="card-tag">Game 3</p>
+                  <h4>Tic-Tac-Toe</h4>
+                  <p>Two-symbol duel with instant reset and draw detection.</p>
+                </div>
+                <div class="mini-game-status-row">
+                  <span>Status</span>
+                  <strong id="ttt-status">X turn</strong>
+                </div>
+                <div class="tic-board" id="tic-board" aria-label="Tic tac toe board"></div>
+                <div class="action-row">
+                  <button type="button" class="action-btn" id="ttt-restart">Restart Tic-Tac-Toe</button>
+                </div>
+              </article>
+
+              <article class="mini-game-card">
+                <div class="mini-game-head">
+                  <p class="card-tag">Game 4</p>
+                  <h4>Memory Match</h4>
+                  <p>Flip pairs, remember positions, and clear the board in the fewest moves.</p>
+                </div>
+                <div class="mini-game-topbar compact">
+                  <div class="bonus-stat"><span>Moves</span><strong id="memory-moves">0</strong></div>
+                  <div class="bonus-stat"><span>Status</span><strong id="memory-status">Ready</strong></div>
+                </div>
+                <div class="memory-board" id="memory-board" aria-label="Memory match board"></div>
+                <div class="action-row">
+                  <button type="button" class="action-btn" id="memory-restart">Restart Memory</button>
+                </div>
+              </article>
+
+              <article class="mini-game-card">
+                <div class="mini-game-head">
+                  <p class="card-tag">Game 5</p>
+                  <h4>Reaction Test</h4>
+                  <p>Wait for the color change, then click fast. Early clicks count as false starts.</p>
+                </div>
+                <div class="mini-game-topbar compact">
+                  <div class="bonus-stat"><span>Best</span><strong id="reaction-best">-</strong></div>
+                  <div class="bonus-stat"><span>Status</span><strong id="reaction-status">Idle</strong></div>
+                </div>
+                <button type="button" class="reaction-pad is-idle" id="reaction-pad">
+                  Tap to start
+                </button>
+                <div class="action-row">
+                  <button type="button" class="action-btn" id="reaction-restart">Reset Reaction Test</button>
+                </div>
+              </article>
             </div>
           </div>
         </div>

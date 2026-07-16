@@ -521,6 +521,116 @@ canvas {
   gap: 1rem;
 }
 
+.mini-game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.mini-game-card {
+  padding: 1.15rem;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 249, 240, 0.94));
+  border: 1px solid rgba(194, 128, 34, 0.12);
+  display: grid;
+  gap: 0.9rem;
+}
+
+.mini-game-head h4 {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+}
+
+.mini-game-head p:last-child {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.mini-game-status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text-soft);
+}
+
+.mini-game-status-row strong {
+  color: var(--accent-strong);
+}
+
+.mini-game-topbar.compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.tic-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.tic-cell {
+  min-height: 4.4rem;
+  border-radius: 16px;
+  border: 1px solid rgba(24, 104, 219, 0.14);
+  background: linear-gradient(180deg, #ffffff, #eef5ff);
+  color: var(--accent-strong);
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.memory-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.memory-card {
+  min-height: 4rem;
+  border-radius: 16px;
+  border: 1px solid rgba(24, 104, 219, 0.12);
+  background: linear-gradient(180deg, #dce9ff, #b8d1ff);
+  color: transparent;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.memory-card.is-flipped,
+.memory-card.is-matched {
+  background: linear-gradient(180deg, #fffaf2, #f5d7aa);
+  color: #704722;
+}
+
+.memory-card.is-matched {
+  border-color: rgba(76, 107, 31, 0.24);
+}
+
+.reaction-pad {
+  min-height: 12rem;
+  border-radius: 24px;
+  border: 1px solid rgba(24, 104, 219, 0.14);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.reaction-pad.is-idle {
+  background: linear-gradient(180deg, #4d627d, #28384f);
+}
+
+.reaction-pad.is-waiting {
+  background: linear-gradient(180deg, #c45d42, #8f2f1f);
+}
+
+.reaction-pad.is-ready {
+  background: linear-gradient(180deg, #5ea43e, #356d1f);
+}
+
+.reaction-pad.is-result {
+  background: linear-gradient(180deg, #2d6fbe, #184c87);
+}
+
 .mini-2048-controls {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -926,6 +1036,10 @@ canvas {
     grid-template-columns: 1fr;
   }
 
+  .mini-game-grid {
+    grid-template-columns: 1fr;
+  }
+
   .game-topbar {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -985,6 +1099,10 @@ canvas {
 
   .mini-2048-controls {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .memory-board {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .dir-btn.up,

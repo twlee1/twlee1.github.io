@@ -76,3 +76,23 @@
 - Act: updated `index.html`, `styles.css`, and `script.js` to add a playable 2048 mini-game below the existing snake game, including score, best score, status, directional controls, restart, local persistence, and isolated rendering/state logic.
 - Verification: `node --check script.js`, explicit HTML presence checks for the 2048 block, and local `HTTP 200` from a temporary static server.
 - Result: PASS. Local site is ready for commit, push, and redeploy.
+
+## 2026-07-16 - Deployment After Step 9 Loop 5
+- Mode: CODEX_FALLBACK
+- Deployment target: `https://github.com/twlee1/twlee1.github.io.git` on branch `main`
+- Commit pushed: `2347380`
+- Result: PASS
+- Live URL: `https://twlee1.github.io/`
+- Live checks:
+  - `HTTP 200 OK` confirmed from the deployed URL
+  - `Playable 2048 mini-game`, `Restart 2048`, and `mini-2048-board` confirmed in live HTML after cache/build delay
+- Final state: `DEPLOYED`
+
+## 2026-07-16 - Step 9 Loop 6
+- Mode: CODEX_FALLBACK
+- Claude model: unavailable in this environment
+- Pre-check: `claude --print` remained unavailable, so fallback verification was used.
+- Scope: correct the game-count mismatch by expanding the page from two playable games to five playable games.
+- Act: updated `index.html`, `styles.css`, and `script.js` to keep `Snake` and `2048`, then add playable `Tic-Tac-Toe`, `Memory Match`, and `Reaction Test` mini-games directly in the page.
+- Verification: `node --check script.js`, explicit HTML presence checks for `Tic-Tac-Toe`, `Memory Match`, and `Reaction Test`, and local `HTTP 200` from a temporary static server.
+- Result: PASS. Local site is ready for commit, push, and redeploy.
