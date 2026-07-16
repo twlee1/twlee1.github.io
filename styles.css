@@ -421,6 +421,78 @@ canvas {
   box-shadow: 0 34px 110px rgba(10, 21, 41, 0.35);
 }
 
+.reference-block {
+  margin-top: 1.35rem;
+  padding: 1.35rem;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(244, 248, 255, 0.88));
+  border: 1px solid rgba(24, 104, 219, 0.14);
+  box-shadow: var(--shadow);
+}
+
+.reference-heading {
+  margin-bottom: 1rem;
+}
+
+.reference-heading h3 {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.reference-intro {
+  margin: 0.8rem 0 0;
+  max-width: 68ch;
+  color: var(--text-soft);
+}
+
+.reference-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.reference-card {
+  padding: 1.15rem;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #ffffff, #f7faff);
+  border: 1px solid rgba(24, 104, 219, 0.12);
+}
+
+.reference-card h4 {
+  margin: 0 0 0.45rem;
+  font-size: 1.15rem;
+}
+
+.reference-card p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.reference-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
+.reference-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(24, 104, 219, 0.16);
+  background: #fff;
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.reference-links a:hover,
+.reference-links a:focus-visible {
+  background: var(--surface-tint);
+}
+
 .game-shell::before {
   content: "";
   position: absolute;
@@ -733,6 +805,10 @@ canvas {
 
   .game-topbar {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .reference-grid {
+    grid-template-columns: 1fr;
   }
 }
 
