@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>twlee1 | Professional Portfolio</title>
+    <meta name="description" content="Responsive professional portfolio with a Games section and a playable snake game.">
+    <link rel="stylesheet" href="./styles.css">
+    <script defer src="./script.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-nav-open="false">
+      <div class="container header-inner">
+        <a class="brand" href="#home" aria-label="twlee1 home">
+          <span class="brand-mark">T</span>
+          <span class="brand-copy">
+            <strong>twlee1</strong>
+            <small>Portfolio</small>
+          </span>
+        </a>
+
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+          Menu
+        </button>
+
+        <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#experience">Experience</a>
+          <a href="#research">Research</a>
+          <a href="#games">Games</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero section" id="home">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Professional profile draft</p>
+            <h1>Clear work, calm structure, and room to play.</h1>
+            <p class="lead">
+              A responsive portfolio scaffold with a dedicated game area. This draft uses a sample
+              profile so the layout, navigation, and game shell can be completed before final copy.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#projects">View projects</a>
+              <a class="button button-secondary" href="#games">Open games</a>
+            </div>
+          </div>
+
+          <aside class="hero-card">
+            <p class="card-label">Sample profile</p>
+            <h2>Son Heung-min</h2>
+            <p class="card-description">
+              Public-figure sample content used as a stand-in profile until the final project brief is confirmed.
+            </p>
+            <ul class="metric-list">
+              <li><span>Focus</span><strong>Speed, precision, and consistency</strong></li>
+              <li><span>Mode</span><strong>Static HTML, CSS, JavaScript</strong></li>
+              <li><span>Next</span><strong>Responsive layout and game polish</strong></li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="about">
+        <div class="container section-grid">
+          <div>
+            <p class="eyebrow">About</p>
+            <h2>Built to stay readable on every screen.</h2>
+          </div>
+          <p>
+            The layout keeps the core sections separate so later passes can add content without
+            breaking navigation or resizing behavior.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="projects">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Projects</p>
+            <h2>Reserved for confirmed work examples.</h2>
+          </div>
+          <div class="card-grid">
+            <article class="info-card">
+              <p class="card-tag">Prototype</p>
+              <h3>Portfolio foundation</h3>
+              <p>Navigation, sections, and responsive structure are in place.</p>
+            </article>
+            <article class="info-card">
+              <p class="card-tag">Interaction</p>
+              <h3>Games section</h3>
+              <p>Space is ready for the snake game and future enhancements.</p>
+            </article>
+            <article class="info-card">
+              <p class="card-tag">Content</p>
+              <h3>Sample profile</h3>
+              <p>Unverified content stays clearly marked for later replacement.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="experience">
+        <div class="container section-grid">
+          <div>
+            <p class="eyebrow">Experience</p>
+            <h2>One clear place for timeline details.</h2>
+          </div>
+          <p>
+            This section is intentionally lightweight for now and will later hold only confirmed
+            experience entries.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="research">
+        <div class="container section-grid">
+          <div>
+            <p class="eyebrow">Research</p>
+            <h2>Space for methods, notes, or public writing.</h2>
+          </div>
+          <p>
+            Keeping this section separate makes it easy to expand without disturbing the navigation
+            or layout structure.
+          </p>
+        </div>
+      </section>
+
+      <section class="section section-games" id="games">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Games</p>
+            <h2>Snake game with keyboard and touch controls.</h2>
+          </div>
+
+          <div class="game-shell">
+            <div class="game-topbar">
+              <div class="game-stat"><span>Score</span><strong id="score">0</strong></div>
+              <div class="game-stat"><span>Best</span><strong id="best-score">0</strong></div>
+              <div class="game-stat"><span>Status</span><strong id="game-status">Ready</strong></div>
+            </div>
+
+            <div class="game-layout">
+              <div class="game-board-wrap">
+                <canvas
+                  id="game-canvas"
+                  class="game-canvas"
+                  width="480"
+                  height="480"
+                  aria-label="Snake game board"
+                  role="img"
+                ></canvas>
+                <p class="game-note">
+                  Use Arrow keys, WASD, or the touch buttons. Press Space to pause and R to restart.
+                </p>
+              </div>
+
+              <div class="game-panel">
+                <div class="control-pad" aria-label="Game controls">
+                  <button type="button" class="dir-btn up" data-direction="up">Up</button>
+                  <button type="button" class="dir-btn left" data-direction="left">Left</button>
+                  <button type="button" class="dir-btn down" data-direction="down">Down</button>
+                  <button type="button" class="dir-btn right" data-direction="right">Right</button>
+                </div>
+
+                <div class="action-row">
+                  <button type="button" class="action-btn" data-action="start">Start</button>
+                  <button type="button" class="action-btn" data-action="pause">Pause</button>
+                  <button type="button" class="action-btn" data-action="restart">Restart</button>
+                </div>
+
+                <div class="control-help">
+                  <h3>Rules</h3>
+                  <ul>
+                    <li>Eat food to grow and score.</li>
+                    <li>Avoid walls, yourself, and the moving enemy.</li>
+                    <li>Reverse direction is blocked to keep input safe.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="contact">
+        <div class="container section-grid">
+          <div>
+            <p class="eyebrow">Contact</p>
+            <h2>Simple contact card placeholder.</h2>
+          </div>
+          <p>
+            Replace this with the confirmed contact method, then keep the link visible and direct.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>twlee1 portfolio draft</p>
+        <p><span id="current-year"></span></p>
+      </div>
+    </footer>
+  </body>
+</html>
